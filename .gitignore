@@ -1,4 +1,4 @@
 *.asv
 *.wav
-*/mushra_test_signals/*
-*/mushra_results/*
+**/mushra_test_signals/*
+**/mushra_results/*

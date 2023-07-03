@@ -16,7 +16,7 @@
 % Email: Lachlan.Birnie@anu.edu.au
 % Website: https://github.com/lachlanbirnie
 % Creation: 31-Aug-2021
-% Last revision: 16-Sept-2021
+% Last revision: 03-July-2023
 
 %% - Settings -------------------------------------------------------------
 
@@ -117,39 +117,82 @@ return;  % End of test.
 % -------------------------------------------------------------------------
 % - functions -
 % -------------------------------------------------------------------------
-function [] = lb_mushra_training(SIGNALS, SIG_NAMES, INSTRUCTIONS, ...
+function [] = lb_mushra_training(SIGNALS, SIG_DISP_NAME, INSTRUCTIONS, ...
                                  AUDIO_DEVICE_NAME, FS)
-% lachlan's MUSHRA training script.
-% =========================================================================
-% Project   : fb_project_2021 (centered-to-bilateral)
-% File      : lb_mushra_training.m
-% Creation  : 30-08-21
-% Author    : lachlan.birnie (@anu.edu.au @gmail.com)
-% Version   : 13-09-21
+% LB_MUSHRA_TRAINING - MUSHRA training screen.
+% A MATLAB MUSHRA training screen to be taken by a user before starting the
+% testing screens. Allows the listener to listen to all of the signals that
+% will appear throughout the following test.
 %
-% Description
+% Syntax: [] = lb_mushra_training(SIGNALS, SIG_DISP_NAME, INSTRUCTIONS, ...
+%                                 AUDIO_DEVICE_NAME, FS);
 %
-%   The pre-training UI before a mushra test. List all the test signals and
-%   let people click on them.
+% Inputs:
+%    SIGNALS - [N, M] matrix of strings for each signal's '.wav' file name.
+%              N = number of tests.
+%              M = number of signals to compare in each test.
+%              The training screen displays the buttons in the [N, M]
+%              format.
 %
-% Inputs
+%    SIG_DISP_NAME - [N, M] matrix of strings for corresponding names of
+%                    each signal to display to the user on training screen.
 %
-%   SIGNALS     [NxM] matrix of strings of each signal .wav file name. 
-%               N = source signals, M = methods.
+%    INSTRUCTIONS - Matrix of strings giving text instructions to the user
+%                   at the top of the training gui.
 %
-%   SIG_NAMES   [NxM] matrix of strings, names of each signal. 
+%   AUDIO_DEVICE_NAME - String, name of audio device for signal playback.
+%                       DEFAULT = 'default'
 %
-%   INSTRUCTIONS = 'string of instructions given at the top of ui'
+%   FS - Sampling frequency of all test signals.
+%        DEFAULT = 48000
 %
-%   AUDIO_DEVICE_NAME = 'default', name of audio device to play signals.
+% Outputs:
+%    None.
 %
-%   FS = 48000;  Sampling frequency of all the test signals. 
+% Example: 
 %
-% History
-%   
-%   13-09-21 - Use audioDeviceWriter for all versions of MATLAB.
+%     signals = fullfile(["mushra_test_signals/techno_b_N1.wav" ...
+%                        ,"mushra_test_signals/techno_t_N1.wav" ...
+%                        ,"mushra_test_signals/techno_c_N1.wav" ...
+%                        ]);
+% 
+%     sig_disp_names = ["signal-A" ...
+%                      ,"signal-B" ...
+%                      ,"signal-C" ...
+%                      ];
+% 
+%     instructions = ["Listen to each signal and processing method, become familiar with the differences between them." ...
+%                    ,"" ...
+%                    ,"While listening to 'techno' adjust your volume to your normal level for music listening." ...
+%                    ,"" ...
+%                    ,"Listen for:" ...
+%                    ,"Spectral differences (low, medium, high frequency content)" ...
+%                    ,"Spatial differences (if the sound is inside or outside of your head, the location of the source, how narrow or wide the sound source is)" ...
+%                    ,"" ...
+%                    ,"Close the figure to move onto test." ...
+%                    ];
+% 
+%     device = 'default';
+%     fs = 48000;
+% 
+%     lb_mushra_training(signals, sig_disp_names, instructions, device, fs);
 %
-% =========================================================================
+% Other m-files required: none
+% Subfunctions: [] = cb_play_button_pressed(hObject, EventData)
+%               [] = cb_close(hObject, EventData)
+%               [] = stop_track(ind)
+%               [] = start_track(ind)
+%               [X] = signal_to_frames(x, frame_size)
+% MAT-files required: none
+%
+% See also: lb_mushra_test()
+%
+% Author: Lachlan Birnie
+% Audio & Acoustic Signal Processing Group - Australian National University
+% Email: Lachlan.Birnie@anu.edu.au
+% Website: https://github.com/lachlanbirnie
+% Creation: 31-Aug-2021
+% Last revision: 03-July-2023
 
 %% - inputs ---------------------------------------------------------------
 
@@ -164,8 +207,8 @@ if ~exist('SIGNALS','var')
 end
     
 % [NxM] matrix of names of each signal. 
-if ~exist('SIG_NAMES','var')
-    SIG_NAMES = ["techno-reference", ...
+if ~exist('SIG_DISP_NAME','var')
+    SIG_DISP_NAME = ["techno-reference", ...
                  "techno-translation", ...
                  "techno-conventional";
                  "castanets-reference", ...
@@ -221,7 +264,7 @@ for i = (1 : size(SIGNALS, 1))
     for j = (1 : size(SIGNALS, 2))
 
         % Load all signals.
-        Testsig(i,j).name = SIG_NAMES(i,j);  % Name test signal.
+        Testsig(i,j).name = SIG_DISP_NAME(i,j);  % Name test signal.
         [Testsig(i,j).data, Testsig(i,j).fs] = audioread(SIGNALS(i,j));
 
         if Testsig(i,j).fs ~= FS
