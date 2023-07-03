@@ -1,11 +1,22 @@
-% Main mushra test script.
-% -------------------------------------------------------------------------
-% Project   : fb_project_2021
-% File      : lachlans_standalone_mushra.m
-% Creation  : 31-08-21
-% Author    : Lachlan.Birnie (@anu.edu.au \ @gmail.com)
-% Version   : 16-09-21
-% -------------------------------------------------------------------------
+% MUSHRA_STANDALONE - Simple MUSHRA training and test GUI in MATLAB.
+% The configuration/settings of the test are defined at the beginning of
+% this matlab script. The MUSHRA test uses pre-rendered .wav signals.
+%
+% Syntax:  mushra_standalone()
+%
+% Other m-files required: none
+% Subfunctions: lb_mushra_training()
+%               lb_mushra_test()
+% MAT-files required: none
+%
+% See also: OTHER_FUNCTION_NAME1,  OTHER_FUNCTION_NAME2
+%
+% Author: Lachlan Birnie
+% Audio & Acoustic Signal Processing Group - Australian National University
+% Email: Lachlan.Birnie@anu.edu.au
+% Website: https://github.com/lachlanbirnie
+% Creation: 31-Aug-2021
+% Last revision: 16-Sept-2021
 
 %% - Settings -------------------------------------------------------------
 
