@@ -1,15 +1,27 @@
 % MUSHRA_STANDALONE - Simple MUSHRA training and test GUI in MATLAB.
-% The configuration/settings of the test are defined at the beginning of
-% this matlab script. The MUSHRA test uses pre-rendered .wav signals.
+% This script defines a complete MUSHRA test for a user to take. The
+% beginning of the script defines the signals to be tests and the MUSHRA
+% trianing and testing screens that will be presented to the user. The
+% second remainder of the script contains the sub-functions that run each
+% MUSHRA screen.
+%
+% This MUSHRA test is offline. This script loads the test signals from
+% their .wav file names and plays them back directly.
 %
 % Syntax:  mushra_standalone()
+%
+% Outputs:
+%    Saves the user's submitted MUSHRA test scores as a .mat file in
+%    /mushra_results/MUSHRA_SCORES_data_time.mat.
+%
+%   The .mat contains a 'Scores' structure with fields:
+%       .name = name of the signal (given by SIG_NAMES).
+%       .value = score given to test signal 0 to 100.
 %
 % Other m-files required: none
 % Subfunctions: lb_mushra_training()
 %               lb_mushra_test()
 % MAT-files required: none
-%
-% See also: OTHER_FUNCTION_NAME1,  OTHER_FUNCTION_NAME2
 %
 % Author: Lachlan Birnie
 % Audio & Acoustic Signal Processing Group - Australian National University
@@ -18,51 +30,76 @@
 % Creation: 31-Aug-2021
 % Last revision: 03-July-2023
 
-%% - Settings -------------------------------------------------------------
+% EXAMPLE MUSHRA TEST
+% The following example mushra test presents the listener with a training
+% screen, a first test screen, a second test screen. 
+% The training screen gives the listener a chance to listen to all of the
+% signals presented in the test. Here there are 6 total signals. 3 speech
+% signals and 3 techno signals. 
+% The first test screen asks the user to evaluate the 3 techno signals. One
+% of the techno signals is the hidden reference (labelled 'b') and one is
+% the anchor signal (labelled 'c'). Not that the signals labelled 'r' for 
+% refernece and 'b' are the same.
 
-fs = 48000;  % Sampling frequency of signals.
-device = 'default';  % Audio player device. 
+% Sampling frequency of signals.
+% All signals are pre-rendered at 48 kHz.
+fs = 48000;
 
-% --- Techno ---
+% Audio player device.
+% Use MATLAB's 'default' audio player for signal playback.
+device = 'default';
 
+% --- Example, listing the names of the techno test signals ---
+
+% File name of the reference signal.
 techno_reference = fullfile(["mushra_test_signals/techno_r_N1.wav"]);
 
+% File names of all test signals, including the hidden ref and anchor.
 techno_signals = fullfile(["mushra_test_signals/techno_b_N1.wav" ...
                           ,"mushra_test_signals/techno_t_N1.wav" ...
                           ,"mushra_test_signals/techno_c_N1.wav" ...
                           ]);
-              
+
+% Display names of the signals on the training screen.
 techno_training_names = ["techno-A" ...
                         ,"techno-B" ...
                         ,"techno-C" ...
                         ];
-             
+
+% Names to call the signals in the results '.mat' file.
+% Note, the user/listener will be able to see these names if they open this
+% script or the result file.
 techno_test_names = ["techno-b" ...
                     ,"techno-t" ...
                     ,"techno-c" ...
                     ];
-                
-% --- Speech --- 
 
+% --- Example, listing the names of the speech test signals ---
+
+% File name of the speech reference signal.
 speech_reference = fullfile(["mushra_test_signals/speech_r_N1.wav"]);
 
+% File names of all speech test signals, including hidden ref & anchor.
 speech_signals = fullfile(["mushra_test_signals/speech_b_N1.wav" ...
                           ,"mushra_test_signals/speech_t_N1.wav" ...
                           ,"mushra_test_signals/speech_c_N1.wav" ...
                           ]);
-             
+
+% Names to display the speech signals as on the training screen.
 speech_training_names = ["speech-A" ...
                         ,"speech-B" ...
                         ,"speech-C" ...
                         ];
-                    
+
+% Names to call the signals in the results '.mat' file.
 speech_test_names = ["speech-b" ...
                     ,"speech-t" ...
                     ,"speech-c" ...
                     ];
 
-%% - Training -------------------------------------------------------------
+%% --- MUSHRA Training Screen ---
 
+% Text instructions to display on the training screen.
 instructions = ["Listen to each signal and processing method, become familiar with the differences between them." ...
                ,"" ...
                ,"While listening to 'techno' adjust your volume to your normal level for music listening." ...
@@ -74,14 +111,16 @@ instructions = ["Listen to each signal and processing method, become familiar wi
                ,"Close the figure to move onto test." ...
                ];
 
+% Create and run the training screen.
 lb_mushra_training([techno_signals; speech_signals], ...
                    [techno_training_names; speech_training_names], ...
                    instructions, ...
                    device, ...
                    fs);
 
-%% - Techno music, basic audio quality ------------------------------------
+%% --- MUSHRA Test Screen - Techno Music ---
 
+% Text instructions to display on the test screen.
 instructions = ["Rank each signal on OVERALL QUALITY with how similar it is to the reference from bad to excellent (0 to 100)." ...
                ,"" ...
                ,"Listen for: Spectral differences (low, medium, high frequency content), Spatial differences (if the sound is inside or outside of your head, the location of the source, how narrow or wide the sound source is) " ...
@@ -89,6 +128,7 @@ instructions = ["Rank each signal on OVERALL QUALITY with how similar it is to t
                ,"Close the figure and click SAVE to move onto the next test." ...
                ];
 
+% Create and run the test screen.
 lb_mushra_test(techno_reference, ...
                techno_signals, ...
                techno_test_names, ...
@@ -96,7 +136,7 @@ lb_mushra_test(techno_reference, ...
                device, ...
                fs);
 
-%% - Speech, basic audio quality ------------------------------------------
+%% --- MUSHRA Test Screen - Speech Signals ---
 
 instructions = ["Rank each signal on OVERALL QUALITY with how similar it is to the reference from bad to excellent (0 to 100)." ...
                ,"" ...
@@ -112,11 +152,13 @@ lb_mushra_test(speech_reference, ...
                device, ...
                fs);
            
-return;  % End of test. 
-           
+return;  % End of the MUSHRA test.
+
+
 % -------------------------------------------------------------------------
-% - functions -
+% - MUSHRA Screen Functions -
 % -------------------------------------------------------------------------
+
 function [] = lb_mushra_training(SIGNALS, SIG_DISP_NAMES, INSTRUCTIONS, ...
                                  AUDIO_DEVICE_NAME, FS)
 % LB_MUSHRA_TRAINING - MUSHRA training screen.
@@ -195,26 +237,6 @@ function [] = lb_mushra_training(SIGNALS, SIG_DISP_NAMES, INSTRUCTIONS, ...
 % Last revision: 03-July-2023
 
 %% - inputs ---------------------------------------------------------------
-
-% [NxM] matrix of strings of each signal. N = source signals, M = methods.
-if ~exist('SIGNALS','var')
-    SIGNALS = ["results/space_0p8_100irls_48khz_N1/reference.wav", ...
-               "results/space_0p8_100irls_48khz_N1/mymethod.wav", ...
-               "results/space_0p8_100irls_48khz_N1/conventional.wav"; ...
-               "results/castanets_0p8_100irls_48k_N1/reference.wav", ...
-               "results/castanets_0p8_100irls_48k_N1/mymethod.wav", ...
-               "results/castanets_0p8_100irls_48k_N1/conventional.wav"];
-end
-    
-% [NxM] matrix of names of each signal. 
-if ~exist('SIG_DISP_NAMES','var')
-    SIG_DISP_NAMES = ["techno-reference", ...
-                 "techno-translation", ...
-                 "techno-conventional";
-                 "castanets-reference", ...
-                 "castanets-translation", ...
-                 "castanets-conventional"];
-end
 
 if ~exist('INSTRUCTIONS','var') || isempty(INSTRUCTIONS)
     INSTRUCTIONS = 'Get familiar with the different signals';
@@ -379,15 +401,6 @@ end
 return;
 
 
-
-
-
-
-
-
-
-
-
 %% - callback functions ---------------------------------------------------
 
 function [] = cb_play_button_pressed(hObject, EventData) 
@@ -400,6 +413,7 @@ function [] = cb_close(hObject, EventData)
     delete(gcf);
     stop_test = true;  % Stop playing music by breaking the main loop.
 end
+
 
 %% - sub functions --------------------------------------------------------
 
@@ -442,7 +456,8 @@ function [X] = signal_to_frames(x, frame_size)
     
 end
 
-end
+end  % end lb_mushra_training()
+
 
 function [] = lb_mushra_test(REFERENCE, SIGNALS, SIG_NAMES, ... 
                         INSTRUCTIONS, AUDIO_DEVICE_NAME, FS)
@@ -534,20 +549,6 @@ function [] = lb_mushra_test(REFERENCE, SIGNALS, SIG_NAMES, ...
 % Last revision: 03-July-2023
 
 %% - inputs ---------------------------------------------------------------
-
-if ~exist('REFERENCE','var')
-    REFERENCE = "results/space_0p8_100irls_48khz_N1/reference.wav";
-end
-
-if ~exist('SIGNALS','var')
-    SIGNALS = ["results/space_0p8_100irls_48khz_N1/reference.wav", ...
-        "results/space_0p8_100irls_48khz_N1/mymethod.wav", ...
-        "results/space_0p8_100irls_48khz_N1/conventional.wav"];
-end
-
-if ~exist('SIG_NAMES','var')
-    SIG_NAMES = ["hidden-reference", "translation", "conventional"];
-end
    
 if ~exist('INSTRUCTIONS','var') || isempty(INSTRUCTIONS)
     INSTRUCTIONS = 'Rank the signals compared to the reference';
@@ -885,13 +886,6 @@ end
 return;
 
 
-
-
-
-
-
-
-
 %% - callback functions ---------------------------------------------------
 
 % --- Sliders and scores ---
@@ -954,6 +948,7 @@ function [] = cb_save_close(hObject, EventData)
     
 end
 
+
 %% - sub functions --------------------------------------------------------
 
 function [] = stop_track(ind)
@@ -1005,4 +1000,4 @@ function [X] = signal_to_frames(x, frame_size)
     
 end
 
-end
+end  % end lb_mushra_test()
