@@ -29,6 +29,12 @@
 % Website: https://github.com/lachlanbirnie
 % Creation: 31-Aug-2021
 % Last revision: 03-July-2023
+%
+% Copyright (c) 2021-2023, Lachlan Birnie
+% All rights reserved.
+%
+% This source code is licensed under the BSD-style license found in the
+% LICENSE file in the root directory of this source tree.
 
 % EXAMPLE MUSHRA TEST
 % The following example mushra test presents the listener with a training
